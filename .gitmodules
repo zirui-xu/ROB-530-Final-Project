@@ -1,0 +1,6 @@
+[submodule "floam"]
+	path = floam
+	url = https://github.com/wh200720041/floam
+[submodule "SC-A-LOAM"]
+	path = SC-A-LOAM
+	url = https://github.com/gisbi-kim/SC-A-LOAM
