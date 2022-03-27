@@ -30,7 +30,7 @@ void LaserMappingClass::init(double map_resolution){
 	//downsampling size
 	downSizeFilter.setLeafSize(map_resolution, map_resolution, map_resolution);
 }
-
+// add different kinds of cells
 void LaserMappingClass::addWidthCellNegative(void){
 	std::vector<std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr>> map_height_temp;
 	for(int j=0; j < map_height;j++){
@@ -202,4 +202,3 @@ pcl::PointCloud<pcl::PointXYZI>::Ptr LaserMappingClass::getMap(void){
 LaserMappingClass::LaserMappingClass(){
 
 }
-
