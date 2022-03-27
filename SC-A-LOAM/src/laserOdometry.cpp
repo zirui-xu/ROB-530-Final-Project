@@ -65,6 +65,7 @@ constexpr double SCAN_PERIOD = 0.1;
 constexpr double DISTANCE_SQ_THRESHOLD = 25;
 constexpr double NEARBY_SCAN = 2.5;
 
+// Control frequency of publishing to laserMapping 
 int skipFrameNum = 5;
 bool systemInited = false;
 
@@ -77,14 +78,17 @@ double timeLaserCloudFullRes = 0;
 pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtreeCornerLast(new pcl::KdTreeFLANN<pcl::PointXYZI>());
 pcl::KdTreeFLANN<pcl::PointXYZI>::Ptr kdtreeSurfLast(new pcl::KdTreeFLANN<pcl::PointXYZI>());
 
+// points at current frame
 pcl::PointCloud<PointType>::Ptr cornerPointsSharp(new pcl::PointCloud<PointType>());
 pcl::PointCloud<PointType>::Ptr cornerPointsLessSharp(new pcl::PointCloud<PointType>());
 pcl::PointCloud<PointType>::Ptr surfPointsFlat(new pcl::PointCloud<PointType>());
 pcl::PointCloud<PointType>::Ptr surfPointsLessFlat(new pcl::PointCloud<PointType>());
+pcl::PointCloud<PointType>::Ptr laserCloudFullRes(new pcl::PointCloud<PointType>());
 
+// corner points and flat poitns at last frame
 pcl::PointCloud<PointType>::Ptr laserCloudCornerLast(new pcl::PointCloud<PointType>());
 pcl::PointCloud<PointType>::Ptr laserCloudSurfLast(new pcl::PointCloud<PointType>());
-pcl::PointCloud<PointType>::Ptr laserCloudFullRes(new pcl::PointCloud<PointType>());
+
 
 int laserCloudCornerLastNum = 0;
 int laserCloudSurfLastNum = 0;
@@ -247,6 +251,7 @@ int main(int argc, char **argv)
                 ROS_BREAK();
             }
 
+            // Get feature points from the queue for each future
             mBuf.lock();
             cornerPointsSharp->clear();
             pcl::fromROSMsg(*cornerSharpBuf.front(), *cornerPointsSharp);
@@ -270,6 +275,7 @@ int main(int argc, char **argv)
             mBuf.unlock();
 
             TicToc t_whole;
+
             // initializing
             if (!systemInited)
             {
@@ -282,7 +288,7 @@ int main(int argc, char **argv)
                 int surfPointsFlatNum = surfPointsFlat->points.size();
 
                 TicToc t_opt;
-                for (size_t opti_counter = 0; opti_counter < 2; ++opti_counter)
+                for (size_t opti_counter = 0; opti_counter < 2; ++opti_counter) // ICP for point-to-line and point-to-plane, iterate twice
                 {
                     corner_correspondence = 0;
                     plane_correspondence = 0;
@@ -305,22 +311,24 @@ int main(int argc, char **argv)
 
                     /*
                         Find correspondence for corner features
-
                     */
                     for (int i = 0; i < cornerPointsSharpNum; ++i)
                     {
+                        // Transform corner point from current frame to last frame to find the correspondence easily
+                        // Denoted as point O
                         TransformToStart(&(cornerPointsSharp->points[i]), &pointSel);
-                        kdtreeCornerLast->nearestKSearch(pointSel, 1, pointSearchInd, pointSearchSqDis);
+                        // Find closest point in the cornerPointsLessSharp at last frame
+                        kdtreeCornerLast->nearestKSearch(pointSel, 1, pointSearchInd, pointSearchSqDis); 
 
                         int closestPointInd = -1, minPointInd2 = -1;
                         if (pointSearchSqDis[0] < DISTANCE_SQ_THRESHOLD)
                         {
-                            closestPointInd = pointSearchInd[0];
+                            closestPointInd = pointSearchInd[0]; // Denoted as point A
                             int closestPointScanID = int(laserCloudCornerLast->points[closestPointInd].intensity);
 
                             double minPointSqDis2 = DISTANCE_SQ_THRESHOLD;
                             
-                            // search in the direction of increasing scan line
+                            // Search the other closest point in the direction of increasing scan line
                             for (int j = closestPointInd + 1; j < (int)laserCloudCornerLast->points.size(); ++j)
                             {
                                 // if in the same scan line, continue
@@ -340,13 +348,13 @@ int main(int argc, char **argv)
 
                                 if (pointSqDis < minPointSqDis2)
                                 {
-                                    // find nearer point
+                                    // find nearer point, donoted as point B
                                     minPointSqDis2 = pointSqDis;
                                     minPointInd2 = j;
                                 }
                             }
 
-                            // search in the direction of decreasing scan line
+                            // Search the other closest point in the direction of decreasing scan line
                             for (int j = closestPointInd - 1; j >= 0; --j)
                             {
                                 // if in the same scan line, continue
@@ -366,7 +374,7 @@ int main(int argc, char **argv)
 
                                 if (pointSqDis < minPointSqDis2)
                                 {
-                                    // find nearer point
+                                    // find nearer point, denoted as point B
                                     minPointSqDis2 = pointSqDis;
                                     minPointInd2 = j;
                                 }
@@ -374,6 +382,7 @@ int main(int argc, char **argv)
                         }
                         if (minPointInd2 >= 0) // both closestPointInd and minPointInd2 is valid
                         {
+                            // point O, A, B
                             Eigen::Vector3d curr_point(cornerPointsSharp->points[i].x,
                                                        cornerPointsSharp->points[i].y,
                                                        cornerPointsSharp->points[i].z);
@@ -389,6 +398,7 @@ int main(int argc, char **argv)
                                 s = (cornerPointsSharp->points[i].intensity - int(cornerPointsSharp->points[i].intensity)) / SCAN_PERIOD;
                             else
                                 s = 1.0;
+                            // residual = distance from point O to line AB
                             ceres::CostFunction *cost_function = LidarEdgeFactor::Create(curr_point, last_point_a, last_point_b, s);
                             problem.AddResidualBlock(cost_function, loss_function, para_q, para_t);
                             corner_correspondence++;
@@ -400,13 +410,15 @@ int main(int argc, char **argv)
                     */
                     for (int i = 0; i < surfPointsFlatNum; ++i)
                     {
+                        // Transform surf point from current frame to last frame to find the correspondence easily
+                        // Denoted as point O 
                         TransformToStart(&(surfPointsFlat->points[i]), &pointSel);
                         kdtreeSurfLast->nearestKSearch(pointSel, 1, pointSearchInd, pointSearchSqDis);
 
                         int closestPointInd = -1, minPointInd2 = -1, minPointInd3 = -1;
                         if (pointSearchSqDis[0] < DISTANCE_SQ_THRESHOLD)
                         {
-                            closestPointInd = pointSearchInd[0];
+                            closestPointInd = pointSearchInd[0]; // Denoted as point A
 
                             // get closest point's scan ID
                             int closestPointScanID = int(laserCloudSurfLast->points[closestPointInd].intensity);
@@ -429,12 +441,14 @@ int main(int argc, char **argv)
                                 // if in the same or lower scan line
                                 if (int(laserCloudSurfLast->points[j].intensity) <= closestPointScanID && pointSqDis < minPointSqDis2)
                                 {
+                                    // find nearer point, denoted as point B
                                     minPointSqDis2 = pointSqDis;
                                     minPointInd2 = j;
                                 }
                                 // if in the higher scan line
                                 else if (int(laserCloudSurfLast->points[j].intensity) > closestPointScanID && pointSqDis < minPointSqDis3)
                                 {
+                                    // find nearer point, denoted as point C
                                     minPointSqDis3 = pointSqDis;
                                     minPointInd3 = j;
                                 }
@@ -457,12 +471,13 @@ int main(int argc, char **argv)
                                 // if in the same or higher scan line
                                 if (int(laserCloudSurfLast->points[j].intensity) >= closestPointScanID && pointSqDis < minPointSqDis2)
                                 {
+                                    // find nearer point, denoted as point B
                                     minPointSqDis2 = pointSqDis;
                                     minPointInd2 = j;
                                 }
                                 else if (int(laserCloudSurfLast->points[j].intensity) < closestPointScanID && pointSqDis < minPointSqDis3)
                                 {
-                                    // find nearer point
+                                    // find nearer point, denoted as point C
                                     minPointSqDis3 = pointSqDis;
                                     minPointInd3 = j;
                                 }
@@ -470,7 +485,7 @@ int main(int argc, char **argv)
 
                             if (minPointInd2 >= 0 && minPointInd3 >= 0)
                             {
-
+                                // Points O, A, B, C
                                 Eigen::Vector3d curr_point(surfPointsFlat->points[i].x,
                                                             surfPointsFlat->points[i].y,
                                                             surfPointsFlat->points[i].z);
@@ -489,6 +504,7 @@ int main(int argc, char **argv)
                                     s = (surfPointsFlat->points[i].intensity - int(surfPointsFlat->points[i].intensity)) / SCAN_PERIOD;
                                 else
                                     s = 1.0;
+                                // residual = distance from point O to plane ABC
                                 ceres::CostFunction *cost_function = LidarPlaneFactor::Create(curr_point, last_point_a, last_point_b, last_point_c, s);
                                 problem.AddResidualBlock(cost_function, loss_function, para_q, para_t);
                                 plane_correspondence++;
@@ -510,11 +526,13 @@ int main(int argc, char **argv)
                     options.max_num_iterations = 4;
                     options.minimizer_progress_to_stdout = false;
                     ceres::Solver::Summary summary;
+                    // Based on the above residuals, solve the current pose respect to the last frame: para_q, para_t
                     ceres::Solve(options, &problem, &summary);
                     //printf("solver time %f ms \n", t_solver.toc());
                 }
                 //printf("optimization twice time %f \n", t_opt.toc());
 
+                // Use the computed pose and the last pose to update the current pose
                 t_w_curr = t_w_curr + q_w_curr * t_last_curr;
                 q_w_curr = q_w_curr * q_last_curr;
             }
@@ -565,6 +583,7 @@ int main(int argc, char **argv)
                 }
             }
 
+            // Update point clouds for next frame
             pcl::PointCloud<PointType>::Ptr laserCloudTemp = cornerPointsLessSharp;
             cornerPointsLessSharp = laserCloudCornerLast;
             laserCloudCornerLast = laserCloudTemp;
@@ -578,6 +597,7 @@ int main(int argc, char **argv)
 
             // std::cout << "the size of corner last is " << laserCloudCornerLastNum << ", and the size of surf last is " << laserCloudSurfLastNum << '\n';
 
+            // Update KD-Tree for next frame
             kdtreeCornerLast->setInputCloud(laserCloudCornerLast);
             kdtreeSurfLast->setInputCloud(laserCloudSurfLast);
 
@@ -589,13 +609,13 @@ int main(int argc, char **argv)
                 pcl::toROSMsg(*laserCloudCornerLast, laserCloudCornerLast2);
                 laserCloudCornerLast2.header.stamp = ros::Time().fromSec(timeSurfPointsLessFlat);
                 laserCloudCornerLast2.header.frame_id = "/camera";
-                pubLaserCloudCornerLast.publish(laserCloudCornerLast2);
+                pubLaserCloudCornerLast.publish(laserCloudCornerLast2); // cornerPointsLessSharp
 
                 sensor_msgs::PointCloud2 laserCloudSurfLast2;
                 pcl::toROSMsg(*laserCloudSurfLast, laserCloudSurfLast2);
                 laserCloudSurfLast2.header.stamp = ros::Time().fromSec(timeSurfPointsLessFlat);
                 laserCloudSurfLast2.header.frame_id = "/camera";
-                pubLaserCloudSurfLast.publish(laserCloudSurfLast2);
+                pubLaserCloudSurfLast.publish(laserCloudSurfLast2); // surfPointsLessFlat
 
                 sensor_msgs::PointCloud2 laserCloudFullRes3;
                 pcl::toROSMsg(*laserCloudFullRes, laserCloudFullRes3);
