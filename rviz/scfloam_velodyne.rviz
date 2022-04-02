@@ -4,11 +4,9 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Grid1
-        - /TF1
-        - /TF1/Frames1
-        - /map1
         - /map1/Autocompute Value Bounds1
+        - /floam_result1
+        - /pgoPath1
       Splitter Ratio: 0.5
     Tree Height: 728
   - Class: rviz/Selection
@@ -29,7 +27,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: map
+    SyncSource: raw_data
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -41,7 +39,7 @@ Visualization Manager:
       Cell Size: 5
       Class: rviz/Grid
       Color: 160; 160; 164
-      Enabled: true
+      Enabled: false
       Line Style:
         Line Width: 0.029999999329447746
         Value: Lines
@@ -60,26 +58,23 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        aft_mapped:
-          Value: false
-        base_link:
+        aft_pgo:
           Value: true
-        map:
+        camera_init:
           Value: true
-        world:
-          Value: false
+        laser_odom:
+          Value: true
       Marker Scale: 3
       Name: TF
       Show Arrows: false
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          map:
-            aft_mapped:
-              {}
-            base_link:
-              {}
+        camera_init:
+          aft_pgo:
+            {}
+          laser_odom:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -97,9 +92,7 @@ Visualization Manager:
       Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 255
       Min Color: 0; 0; 0
-      Min Intensity: 0
       Name: raw_data
       Position Transformer: XYZ
       Queue Size: 10
@@ -107,7 +100,7 @@ Visualization Manager:
       Size (Pixels): 1
       Size (m): 0.009999999776482582
       Style: Points
-      Topic: /velodyne_points_filtered
+      Topic: /velodyne_cloud_registered_local
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -124,12 +117,10 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 0.9565645456314087
       Min Color: 0; 0; 0
-      Min Intensity: 0
       Name: map
       Position Transformer: XYZ
       Queue Size: 10
@@ -141,11 +132,11 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 25; 255; 0
+      Color: 4; 69; 246
       Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
@@ -162,14 +153,60 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /base_link/trajectory
+      Topic: /laser_odom_path
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 25; 255; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: pgoPath
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /aft_pgo_path
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 255; 170; 0
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: gtPathlc
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /path_gt
       Unreliable: false
       Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: camera_init
     Frame Rate: 30
   Name: root
   Tools:
@@ -193,25 +230,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 16.892133712768555
+      Distance: 757.6300659179688
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.854732632637024
-        Y: -1.3892109394073486
-        Z: 6.691127782687545e-5
+        X: 160.20372009277344
+        Y: 128.74737548828125
+        Z: 9.189161210088059e-5
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.924797773361206
+      Pitch: 1.44979727268219
       Target Frame: body
       Value: ThirdPersonFollower (rviz)
-      Yaw: 1.1854360103607178
+      Yaw: 1.5204379558563232
     Saved: ~
 Window Geometry:
   Displays:
@@ -229,5 +266,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1853
-  X: 795
+  X: 67
   Y: 27
