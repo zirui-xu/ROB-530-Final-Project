@@ -26,6 +26,8 @@
 #include "laserMappingClass.h"
 #include "lidar.h"
 
+double timeLaserCloudFullRes = 0;
+double timeLaserOdometry = 0;
 
 LaserMappingClass laserMapping;
 lidar::Lidar lidar_param;
@@ -34,8 +36,8 @@ std::queue<nav_msgs::OdometryConstPtr> odometryBuf;
 std::queue<sensor_msgs::PointCloud2ConstPtr> pointCloudBuf;
 
 ros::Publisher map_pub;
-ros::Publisher pubFullResLocal;
-ros::Publisher pubodomAftMapped;
+ros::Publisher pubLaserCloudFullResLocal;
+
 void odomCallback(const nav_msgs::Odometry::ConstPtr &msg)
 {
     mutex_lock.lock();
@@ -71,6 +73,9 @@ void laser_mapping(){
                 continue;  
             }
 
+			timeLaserCloudFullRes = pointCloudBuf.front()->header.stamp.toSec();
+			timeLaserOdometry = odometryBuf.front()->header.stamp.toSec();
+
             //if time aligned 
             pcl::PointCloud<pcl::PointXYZI>::Ptr pointcloud_in(new pcl::PointCloud<pcl::PointXYZI>());
             pcl::fromROSMsg(*pointCloudBuf.front(), *pointcloud_in);
@@ -83,6 +88,11 @@ void laser_mapping(){
             odometryBuf.pop();
             mutex_lock.unlock();
             
+            sensor_msgs::PointCloud2 laserCloudFullRes3Local;
+			pcl::toROSMsg(*pointcloud_in, laserCloudFullRes3Local);
+			laserCloudFullRes3Local.header.stamp = ros::Time().fromSec(timeLaserOdometry);
+			laserCloudFullRes3Local.header.frame_id = "/camera_init";
+			pubLaserCloudFullResLocal.publish(laserCloudFullRes3Local);
 
             laserMapping.updateCurrentPointsToMap(pointcloud_in,current_pose);
 
@@ -90,10 +100,9 @@ void laser_mapping(){
             sensor_msgs::PointCloud2 PointsMsg;
             pcl::toROSMsg(*pc_map, PointsMsg);
             PointsMsg.header.stamp = pointcloud_time;
-            PointsMsg.header.frame_id = "map";
+            PointsMsg.header.frame_id = "/camera_init"; // map
             map_pub.publish(PointsMsg); 
             
-
 
         }
         //sleep 2 ms every time
@@ -129,10 +138,9 @@ int main(int argc, char **argv)
     laserMapping.init(map_resolution);
     ros::Subscriber subLaserCloud = nh.subscribe<sensor_msgs::PointCloud2>("/velodyne_points_filtered", 100, velodyneHandler);
     ros::Subscriber subOdometry = nh.subscribe<nav_msgs::Odometry>("/odom", 100, odomCallback);
-
+    
     map_pub = nh.advertise<sensor_msgs::PointCloud2>("/map", 100);
-    // pubFullResLocal = nh.advertise<sensor_msgs::PointCloud2>("/velodyne_points_filtered", 100);
-    // pubodomAftMapped = nh.advertise<sensor_msgs::PointCloud2>("/aft_mapped_to_init", 100);
+    pubLaserCloudFullResLocal = nh.advertise<sensor_msgs::PointCloud2>("/velodyne_cloud_registered_local", 100);
     std::thread laser_mapping_process{laser_mapping};
 
     ros::spin();
