@@ -97,7 +97,9 @@ void odom_estimation(){
                 total_frame++;
                 float time_temp = elapsed_seconds.count() * 1000;
                 total_time+=time_temp;
-                ROS_INFO("average odom estimation time %f ms \n \n", total_time/total_frame);
+                
+                if(total_frame % 50 == 0)
+                    ROS_INFO("average odom estimation time %f ms \n \n", total_time/total_frame);
             }
 
 

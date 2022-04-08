@@ -18,12 +18,13 @@ ROB-530-Final-Project
     roslaunch scfloam scfloam_velodyne_HDL_64.launch # Import data after launching it
 ```
 
+- Output will be saved to `save_directory` in `scfloam_velodyne_HDL_64.launch`. Please modify it to the directory you want. Save utility follows [SC-LIO-SAM's save utility](https://github.com/gisbi-kim/SC-LIO-SAM#applications).
 ### Some problems you might encounter
-- `catkin_make` fail: make it until success (in my case, 3 times)
+- `catkin_make` fail: make it until success (in my case, 3 times) if you install everything well.
 
 ## How to import data?
-### General way:
-Download data from [Kitti website](http://www.cvlibs.net/datasets/kitti/eval_odometry.php) to `YOU_KITTI_DATASET_DIRECTORY`. 
+### Raw data way:
+Download data from [Kitti website](http://www.cvlibs.net/datasets/kitti/eval_odometry.php) to `YOUR_KITTI_DATASET_DIRECTORY`. 
 ```
 - Download odometry data set (grayscale, 22 GB)
 - Download odometry data set (velodyne laser data, 80 GB)
@@ -32,7 +33,7 @@ Download data from [Kitti website](http://www.cvlibs.net/datasets/kitti/eval_odo
 
 The directory should form like
 ```
-| YOU_KITTI_DATASET_DIRECTORY 
+| YOUR_KITTI_DATASET_DIRECTORY 
     |-- results
         |-- 00.txt
         |-- 01.txt
@@ -57,13 +58,13 @@ The directory should form like
         |-- ...
 ```
 
-Modify `kitti_dataset_helper.launch` to fit your data (e.g., `dataset_folder`).
+Modify `kitti_helper.launch` to fit your data (e.g., `dataset_folder`).
 
 ```
     source ~/catkin_scfloam_ws/devel/setup.bash
-    roslaunch scfloam kitti_dataset_helper.launch
+    roslaunch scfloam kitti_helper.launch
 ```
-Note: You can also generate rosbag by running the above command. Just change parameters of `kitti_dataset_helper.launch` (i.e., set `to_bag` to `true` and `output_bag_file` to `YOUR_ROSBAG_DIRECTORY`).
+Note: You can also generate rosbag by running the above command. Just change parameters of `kitti_helper.launch` (i.e., set `to_bag` to `true` and `output_bag_file` to `YOUR_ROSBAG_DIRECTORY`).
 
 
 ### Rosbag way: 
@@ -73,5 +74,8 @@ Play the wrapped kitti data in `XXX.bag`. [Here](https://drive.google.com/drive/
 ```
 Note: you should run `roscore` in the other terminal before running the above command.
 
-### Results:
+## Results:
+TODO. (Figure and Table)
 
+## How to evaluate?
+TODO
