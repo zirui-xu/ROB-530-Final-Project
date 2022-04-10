@@ -75,7 +75,9 @@ Play the wrapped kitti data in `XXX.bag`. [Here](https://drive.google.com/drive/
 Note: you should run `roscore` in the other terminal before running the above command.
 
 ## Results:
-![image](https://github.com/zirui-xu/ROB-530-Final-Project/tree/main/img/figure1-1.png)
+<img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-1.png" height="300px"> <img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-2.png" height="300px"> <img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-3.png" height="300px">
+
+![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure2.png)
 
 ## How to evaluate?
 - First after generating corresponding files, you need to open `convert.m` file and change the name of file for 'reading time and sample ground truth accordingly' to 'SC-A-LOAM/times.txt' or 'SC-A-LOAM/times.txt' if you want to estimate SC-A-LOAM or SC-F-LOAM.
