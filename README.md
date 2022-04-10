@@ -75,16 +75,25 @@ Play the wrapped kitti data in `XXX.bag`. [Here](https://drive.google.com/drive/
 Note: you should run `roscore` in the other terminal before running the above command.
 
 ## Results:
-TODO. (Figure and Table)
+![image](https://github.com/zirui-xu/ROB-530-Final-Project/tree/main/img/figure1-1.png)
 
 ## How to evaluate?
-First after generating corresponding files, you need to open 'convert.m' file and change the name of file for 'reading time and sample ground truth accordingly' to ‘SC-A-LOAM/times.txt’ or ‘SC-A-LOAM/times.txt’ if you want to estimate SC-A-LOAM or SC-F-LOAM.
+- First after generating corresponding files, you need to open `convert.m` file and change the name of file for 'reading time and sample ground truth accordingly' to 'SC-A-LOAM/times.txt' or 'SC-A-LOAM/times.txt' if you want to estimate SC-A-LOAM or SC-F-LOAM.
 
-Then run 'convert.m' file to generate a 'ground_truth.txt' file from the '00/02/05.txt' file of ground truth. This is because:
+- Then run `convert.m` file to generate a `ground_truth.txt` file from the '00/02/05.txt' file of ground truth. This is because:
     1. The frames of original ground truth are not the same as output estimates.
     2. The x, y and z dimensions of the original ground truth are not the same as output estimates.
 
-Second, you can install “evo”, an evaluation tool, from https://github.com/MichaelGrupp/evo or by “pip install evo” or other methods you prefer. Then you can use evo for evaluation according to its instructions. Some sample commands for evaluation are:
-    evo_traj kitti SC-A-LOAM\odom_poses.txt SC-A-LOAM\optimized_poses.txt --ref=ground_truth.txt -p --plot_mode=yx
-    evo_ape kitti ground_truth.txt SC-A-LOAM\odom_poses.txt -va --plot --plot_mode yx --save_results SC-A-LOAM/odom_poses.zip
-    evo_res SC-A-LOAM\odom_poses.zip SC-A-LOAM\optimized_poses.zip -p --save_table SC-A-LOAM/comparison.csv
+- Second, you can install “evo”, an evaluation tool, from https://github.com/MichaelGrupp/evo or by “pip install evo” or other methods you prefer. Then you can use evo for evaluation according to its instructions. Some sample commands for evaluation are:
+
+```
+evo_traj kitti SC-A-LOAM\odom_poses.txt SC-A-LOAM\optimized_poses.txt --ref=ground_truth.txt -p --plot_mode=yx
+```
+    
+```
+evo_ape kitti ground_truth.txt SC-A-LOAM\odom_poses.txt -va --plot --plot_mode yx --save_results SC-A-LOAM/odom_poses.zip
+```
+ 
+```
+evo_res SC-A-LOAM\odom_poses.zip SC-A-LOAM\optimized_poses.zip -p --save_table SC-A-LOAM/comparison.csv
+```
