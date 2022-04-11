@@ -76,6 +76,7 @@ Note: you should run `roscore` in the other terminal before running the above co
 
 ## Results:
 TODO
+![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/scfloam_05_gif.gif)
 
 ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/floam_kitti.gif)
 
