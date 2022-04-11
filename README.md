@@ -75,14 +75,14 @@ Play the wrapped kitti data in `XXX.bag`. [Here](https://drive.google.com/drive/
 Note: you should run `roscore` in the other terminal before running the above command.
 
 ## Results:
-TODO
+
 ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/scfloam_05_gif.gif)
 
-![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/floam_kitti.gif)
+<!-- ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/floam_kitti.gif)
 
 ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/floam_mapping.gif)
 
-![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/kitti_example.gif)
+![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/kitti_example.gif) -->
 
 <img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-1.png" height="200px"> <img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-2.png" height="200px"> <img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-3.png" height="200px">
 
