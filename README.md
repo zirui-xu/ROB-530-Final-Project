@@ -94,7 +94,7 @@ TODO
     - The frames of original ground truth are not the same as output estimates.
     - The x, y and z dimensions of the original ground truth are not the same as output estimates.
 
-- Second, you can install “evo”, an evaluation tool, from https://github.com/MichaelGrupp/evo or by “pip install evo” or other methods you prefer. Then you can use evo for evaluation according to its instructions. Some sample commands for evaluation are shown as below:
+- Second, you can install “evo”, an evaluation tool, from https://github.com/MichaelGrupp/evo or by ```pip install evo``` or other methods you prefer. Then you can use evo for evaluation according to its instructions. Some sample commands for evaluation are shown as below:
 
     - If you want to compare trajectories against ground truth, you can use the following command:
     ```
