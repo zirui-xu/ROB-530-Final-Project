@@ -78,17 +78,17 @@ Note: you should run `roscore` in the other terminal before running the above co
 
 ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/scfloam_05_gif.gif)
 
-The result trajectory generated for Kitti00, Kitti02 and Kitti05 are shown as below, see "How to evaluate?" for evaluation. The dashed line is the ground truth of the map, the blue line is the estimate of F-LOAM, and the red line for SC-F-LOAM.
-
 <!-- ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/floam_kitti.gif)
 
 ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/floam_mapping.gif)
 
 ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/kitti_example.gif) -->
 
-The following histogram is comparison of A-LOAM, SC-A-LOAM, F-LOAM, and SC-F-LOAM on Kitti00, Kitti02 and Kitti05. ATE and ARE are in absolute value, and ARE is a unitless estimate.
+The result trajectory generated for Kitti00, Kitti02 and Kitti05 are shown as below, see "How to evaluate?" for evaluation. The dashed line is the ground truth of the map, the blue line is the estimate of F-LOAM, and the red line for SC-F-LOAM.
 
 <img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-1.png" height="200px"> <img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-2.png" height="200px"> <img src="https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure1-3.png" height="200px">
+
+The following histogram is comparison of A-LOAM, SC-A-LOAM, F-LOAM, and SC-F-LOAM on Kitti00, Kitti02 and Kitti05. ATE and ARE are in absolute value, and ARE is a unitless estimate.
 
 ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/figure2.png)
 
