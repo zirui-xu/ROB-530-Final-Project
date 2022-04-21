@@ -75,6 +75,7 @@ Play the wrapped kitti data in `XXX.bag`. [Here](https://drive.google.com/drive/
 Note: you should run `roscore` in the other terminal before running the above command.
 
 ## Results:
+[Video](https://drive.google.com/drive/folders/1kA9PQSS7y4W-HHUHsMlSy68-p46vHeKX?usp=sharing)
 
 ![image](https://github.com/zirui-xu/ROB-530-Final-Project/blob/main/img/scfloam_05_gif.gif)
 
