@@ -143,3 +143,6 @@ The following chart shows the ATE and ARE of the four methods in KITTI 00, KITTI
     ```
     evo_res SC-F-LOAM\odom_poses.zip SC-F-LOAM\optimized_poses.zip -p --save_table SC-F-LOAM/comparison.csv
     ```
+    
+## License
+Our code is made publicly available for the benefit of the community
